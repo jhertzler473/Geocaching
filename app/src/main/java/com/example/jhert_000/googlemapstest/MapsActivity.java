@@ -1,9 +1,12 @@
 package com.example.jhert_000.googlemapstest;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +28,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -40,6 +44,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int INTERVAL_REFRESH = 10 * 1000;   // 10 seconds
+
+
 
     private GoogleMap mMap;
     private GoogleApiClient gAC;
@@ -66,13 +72,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         backButton = (Button) findViewById(R.id.backButton);
         favButton = (Button) findViewById(R.id.favButton);
+
+        backButton.setOnClickListener(this);
+        favButton.setOnClickListener(this);
     }
 
 
     public void onClick(View v){
         switch(v.getId()){
             case R.id.backButton:
-                //code for moving back to Cache Select screen
+                finish();
                 break;
             case R.id.favButton:
                 //code for favoriting and saving a cache to be continued
@@ -141,6 +150,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateMap(){
         if (gAC.isConnected()){
             setCurrentLocationMarker();
+            Double lat = getIntent().getDoubleExtra("lat", 0);
+            Double lon = getIntent().getDoubleExtra("lon", 0);
+
+            System.out.println(lat);
+            System.out.println(lon);
+
+            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(38.4496, 78.8689)).title("Cache"));
         }
         displayRun();
     }
@@ -177,6 +193,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .position(new LatLng(location.getLatitude(),
                                         location.getLongitude()))
                                 .title("You are here"));
+                System.out.println(location.getLatitude());
+                System.out.println(location.getLongitude());
             }
         }
     }
